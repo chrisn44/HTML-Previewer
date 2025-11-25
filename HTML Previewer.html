@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Ultra Premium HTML Previewer | iPhone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #F59E0B;
+            --accent: #10B981;
+            --dark: #1F2937;
+            --darker: #111827;
+            --light: #F9FAFB;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-dark: rgba(0, 0, 0, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --glow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, #312E81 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .gradient-ball {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+        }
+        
+        .ball-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+        }
+        
+        .ball-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -150px;
+            right: -100px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--light), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            color: var(--light);
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .editor-section {
+            flex: 1;
+        }
+        
+        .preview-section {
+            flex: 1.5;
+        }
+        
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+            z-index: -1;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow), var(--glow);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+        
+        .card-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 20px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+            font-size: 15px;
+            resize: vertical;
+            color: var(--light);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        textarea:focus {
+            outline: none;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        .preview-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-dots {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .preview-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background: #FF5F57; }
+        .dot-yellow { background: #FFBD2E; }
+        .dot-green { background: #28CA42; }
+        
+        .preview-url {
+            flex: 1;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        .preview-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .clear-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            backdrop-filter: blur(10px);
+        }
+        
+        button:active {
+            transform: scale(0.97);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature i {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        
+        .feature-text {
+            font-size: 14px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--light);
+            font-size: 14px;
+            opacity: 0.7;
+            padding: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #8E8E93;
+            padding: 20px;
+            text-align: center;
+            background: white;
+        }
+        
+        .preview-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #C7C7CC;
+        }
+        
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+            }
+            
+            .features {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .preview-container {
+                height: 700px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .preview-container {
+                height: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="gradient-ball ball-1"></div>
+        <div class="gradient-ball ball-2"></div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Ultra Premium HTML Previewer</h1>
+            <p class="subtitle">Experience the most beautiful way to preview HTML on your iPhone. Featuring a large preview area and stunning visual design.</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="editor-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">HTML Editor</h2>
+                            <p class="card-subtitle">Paste or write your HTML code</p>
+                        </div>
+                    </div>
+                    <textarea id="htmlInput" placeholder="Paste your HTML code here...">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My Premium Page&lt;/title&gt;
+    &lt;style&gt;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #8b5cf6;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;✨ Premium Design&lt;/h1&gt;
+        &lt;p&gt;This HTML previewer creates beautiful, modern interfaces with a stunning visual design.&lt;/p&gt;
+        
+        &lt;div class="card"&gt;
+            &lt;h2 style="margin-bottom: 1rem;"&gt;Experience Ultra Premium&lt;/h2&gt;
+            &lt;p&gt;Featuring glassmorphism effects, smooth animations, and a fully responsive layout.&lt;/p&gt;
+            
+            &lt;div class="features"&gt;
+                &lt;div class="feature"&gt;
+                    &lt;i class="fas fa-mobile-alt"&gt;&lt;/i&gt;
+                    &lt;h3&gt;Mobile First&lt;/h3&gt;
+                &lt;/div&gt;
+                &lt;div class="feature"&gt;
+                    &lt;i class="fas fa-bolt"&gt;&lt;/i&gt;
+                    &lt;h3&gt;Fast Preview&lt;/h3&gt;
+                &lt;/div&gt;
+                &lt;div class="feature"&gt;
+                    &lt;i class="fas fa-palette"&gt;&lt;/i&gt;
+                    &lt;h3&gt;Beautiful UI&lt;/h3&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;button&gt;Get Started Now&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                    <div class="buttons">
+                        <button class="preview-btn" id="previewBtn">
+                            <i class="fas fa-play-circle"></i>
+                            Preview HTML
+                        </button>
+                        <button class="clear-btn" id="clearBtn">
+                            <i class="fas fa-broom"></i>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="feature-text">Mobile Optimized</div>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-bolt"></i>
+                        <div class="feature-text">Instant Preview</div>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-palette"></i>
+                        <div class="feature-text">Beautiful UI</div>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-expand"></i>
+                        <div class="feature-text">Large Preview</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Live Preview</h2>
+                            <p class="card-subtitle">See your HTML in real-time</p>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-container">
+                        <div class="preview-header">
+                            <div class="preview-dots">
+                                <div class="preview-dot dot-red"></div>
+                                <div class="preview-dot dot-yellow"></div>
+                                <div class="preview-dot dot-green"></div>
+                            </div>
+                            <div class="preview-url">preview.html</div>
+                        </div>
+                        <iframe id="previewFrame" class="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Ultra Premium HTML Previewer &copy; 2023 | Designed exclusively for iPhone</p>
+        </footer>
+    </div>
+    
+    <div class="watermark">
+        Premium Edition
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const htmlInput = document.getElementById('htmlInput');
+            const previewBtn = document.getElementById('previewBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const previewFrame = document.getElementById('previewFrame');
+            
+            // Function to update the preview
+            function updatePreview() {
+                const htmlContent = htmlInput.value.trim();
+                
+                if (!htmlContent) {
+                    previewFrame.srcdoc = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>
+                                body { 
+                                    font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+                                    padding: 20px;
+                                    background: #f5f5f7;
+                                    color: #333;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+                                    height: 100vh;
+                                    text-align: center;
+                                }
+                                .placeholder-icon {
+                                    font-size: 48px;
+                                    margin-bottom: 15px;
+                                    color: #C7C7CC;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div>
+                                <div class="placeholder-icon">📱</div>
+                                <h3>Preview Area</h3>
+                                <p>Your HTML will appear here after clicking "Preview"</p>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+                    return;
+                }
+                
+                // Check if it's a full HTML document or just fragments
+                const isFullDocument = htmlContent.includes('<html') && 
+                                      htmlContent.includes('<head') && 
+                                      htmlContent.includes('<body');
+                
+                if (isFullDocument) {
+                    // For full HTML documents, use iframe with srcdoc
+                    previewFrame.srcdoc = htmlContent;
+                } else {
+                    // For HTML fragments, render with a basic wrapper
+                    previewFrame.srcdoc = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>
+                                body { 
+                                    font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+                                    padding: 20px;
+                                    background: #f5f5f7;
+                                    color: #333;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            ${htmlContent}
+                        </body>
+                        </html>
+                    `;
+                }
+            }
+            
+            // Event listeners
+            previewBtn.addEventListener('click', updatePreview);
+            
+            clearBtn.addEventListener('click', function() {
+                htmlInput.value = '';
+                updatePreview();
+            });
+            
+            // Auto-update preview when typing (with debounce)
+            let typingTimer;
+            htmlInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(updatePreview, 800);
+            });
+            
+            // Initialize with the sample content - use a small delay to ensure DOM is ready
+            setTimeout(updatePreview, 100);
+        });
+    </script>
+</body>
+</html>
